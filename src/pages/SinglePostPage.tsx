@@ -1,5 +1,5 @@
-import { useEffect, useState, FormEvent, ChangeEvent } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import type { FormEvent, ChangeEvent } from 'react';import { useParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
 // Tipe data baru untuk komentar

@@ -1,5 +1,5 @@
-import { useEffect, useState, FormEvent, ChangeEvent } from 'react';
-import { supabase } from '../supabaseClient';
+import { useEffect, useState } from 'react';
+import type { FormEvent, ChangeEvent } from 'react';import { supabase } from '../supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
 import type { Session } from '@supabase/supabase-js';
 
