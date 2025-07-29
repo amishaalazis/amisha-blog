@@ -1,7 +1,15 @@
+// ========================================================================
+// File: src/pages/AdminPage.tsx
+// Halaman dasbor lengkap untuk mengelola postingan dan pesan.
+// ========================================================================
+
 import { useEffect, useState } from 'react';
-import type { FormEvent, ChangeEvent } from 'react';import { supabase } from '../supabaseClient';
+import type { FormEvent, ChangeEvent } from 'react';
+import { supabase } from '../supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
 import type { Session } from '@supabase/supabase-js';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import CSS untuk tema editor
 
 // Definisikan tipe data
 interface Post {
@@ -25,7 +33,7 @@ interface Message {
 const AdminPage = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]); // State baru untuk pesan
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ title: '', content: '', published_at: '' });
@@ -35,28 +43,18 @@ const AdminPage = () => {
   const [statusMessage, setStatusMessage] = useState('');
   const navigate = useNavigate();
 
-  // Fungsi untuk mengambil semua data admin (post dan pesan)
   const fetchAdminData = async () => {
     setLoading(true);
-    
     const postsPromise = supabase.from('posts').select('*').order('published_at', { ascending: false });
     const messagesPromise = supabase.from('messages').select('*').order('created_at', { ascending: false });
 
     const [postsResult, messagesResult] = await Promise.all([postsPromise, messagesPromise]);
 
-    if (postsResult.error) {
-      console.error('Error fetching posts:', postsResult.error);
-      setStatusMessage('Gagal memuat postingan.');
-    } else {
-      setPosts(postsResult.data || []);
-    }
+    if (postsResult.error) console.error('Error fetching posts:', postsResult.error);
+    else setPosts(postsResult.data || []);
 
-    if (messagesResult.error) {
-      console.error('Error fetching messages:', messagesResult.error);
-      setStatusMessage('Gagal memuat pesan.');
-    } else {
-      setMessages(messagesResult.data || []);
-    }
+    if (messagesResult.error) console.error('Error fetching messages:', messagesResult.error);
+    else setMessages(messagesResult.data || []);
 
     setLoading(false);
   };
@@ -68,7 +66,7 @@ const AdminPage = () => {
         navigate('/login');
       } else {
         setSession(session);
-        fetchAdminData(); // Panggil fungsi data gabungan
+        fetchAdminData();
       }
     };
     getSession();
@@ -79,12 +77,14 @@ const AdminPage = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
-  
-  // ... (Fungsi-fungsi lain seperti handleInputChange, handleSubmit, dll. tetap sama)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleContentChange = (content: string) => {
+    setFormData(prev => ({ ...prev, content: content }));
   };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -188,14 +188,10 @@ const AdminPage = () => {
     }
   };
 
-  // --- FUNGSI BARU UNTUK PESAN ---
   const handleToggleRead = async (message: Message) => {
-    const { error } = await supabase
-      .from('messages')
-      .update({ is_read: !message.is_read })
-      .eq('id', message.id);
+    const { error } = await supabase.from('messages').update({ is_read: !message.is_read }).eq('id', message.id);
     if (error) console.error('Error updating message status:', error);
-    else fetchAdminData(); // Muat ulang data untuk update UI
+    else fetchAdminData();
   };
 
   const handleDeleteMessage = async (id: number) => {
@@ -207,8 +203,14 @@ const AdminPage = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
+    try {
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) console.error('Supabase logout error:', error.message);
+    } catch (e) {
+      console.error('Unexpected logout error:', e);
+    } finally {
+      navigate('/');
+    }
   };
 
   if (!session) return null;
@@ -227,10 +229,8 @@ const AdminPage = () => {
 
       <main className="container mx-auto px-4 sm:px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Kolom Form */}
           <div className="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg">
-            {/* ... Kode form tetap sama ... */}
-             <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">{editingPost ? 'Edit Postingan' : 'Buat Postingan Baru'}</h2>
+            <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">{editingPost ? 'Edit Postingan' : 'Buat Postingan Baru'}</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-1">Judul</label>
@@ -247,8 +247,8 @@ const AdminPage = () => {
                 <p className="text-xs text-slate-500 mt-1">Jika dikosongkan, akan menggunakan tanggal hari ini.</p>
               </div>
               <div>
-                <label htmlFor="content" className="block text-sm font-medium text-slate-700 mb-1">Konten</label>
-                <textarea id="content" name="content" value={formData.content} onChange={handleInputChange} placeholder="Tuliskan ceritamu di sini..." className="w-full p-3 border border-slate-300 rounded-lg" rows={12} required />
+                <label className="block text-sm font-medium text-slate-700 mb-1">Konten</label>
+                <ReactQuill theme="snow" value={formData.content} onChange={handleContentChange} className="bg-white" />
               </div>
               <div className="flex gap-4 items-center pt-4 border-t">
                 <button type="submit" disabled={isSubmitting} className="bg-rose-500 text-white px-8 py-3 rounded-full hover:bg-rose-600 disabled:bg-slate-400 font-semibold">{isSubmitting ? 'Menyimpan...' : (editingPost ? 'Perbarui Postingan' : 'Publikasikan')}</button>
@@ -258,52 +258,49 @@ const AdminPage = () => {
             </form>
           </div>
 
-          {/* Kolom Daftar Postingan */}
-          <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">Daftar Postingan</h2>
-            {loading ? <p>Memuat...</p> : (
-              <ul className="space-y-3">
-                {posts.map(post => (
-                  <li key={post.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-lg hover:bg-rose-50 transition-colors">
-                    <div>
-                      <span className="font-medium text-slate-800">{post.title}</span>
-                      <p className="text-xs text-slate-500">Dipublikasikan: {new Date(post.published_at).toLocaleDateString('id-ID')}</p>
-                    </div>
-                    <div className="space-x-3 mt-2 sm:mt-0 flex-shrink-0">
-                      <button onClick={() => handleEdit(post)} className="text-sm font-semibold text-blue-600 hover:text-blue-800">Edit</button>
-                      <button onClick={() => handleDeletePost(post)} className="text-sm font-semibold text-red-600 hover:text-red-800">Hapus</button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        {/* --- BAGIAN BARU: DAFTAR PESAN --- */}
-        <div className="mt-8 bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">Pesan Masuk</h2>
-          {loading ? <p>Memuat pesan...</p> : (
-            <div className="space-y-4">
-              {messages.length > 0 ? messages.map(msg => (
-                <div key={msg.id} className={`p-4 rounded-lg border ${msg.is_read ? 'bg-white' : 'bg-rose-50 border-rose-200'}`}>
-                  <div className="flex justify-between items-center mb-2">
-                    <div>
-                      <p className="font-semibold text-slate-800">{msg.name} <span className="font-normal text-slate-500">&lt;{msg.email}&gt;</span></p>
-                      <p className="text-xs text-slate-500">Diterima: {new Date(msg.created_at).toLocaleString('id-ID')}</p>
-                    </div>
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                      <button onClick={() => handleToggleRead(msg)} className="text-sm font-semibold text-green-600 hover:text-green-800">
-                        {msg.is_read ? 'Tandai Belum Dibaca' : 'Tandai Sudah Dibaca'}
-                      </button>
-                      <button onClick={() => handleDeleteMessage(msg.id)} className="text-sm font-semibold text-red-600 hover:text-red-800">Hapus</button>
-                    </div>
-                  </div>
-                  <p className="text-slate-700 whitespace-pre-wrap">{msg.message}</p>
-                </div>
-              )) : <p className="text-slate-500 text-center">Tidak ada pesan masuk.</p>}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-white p-6 rounded-xl shadow-lg">
+              <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">Daftar Postingan</h2>
+              {loading ? <p>Memuat...</p> : (
+                <ul className="space-y-3 max-h-96 overflow-y-auto">
+                  {posts.map(post => (
+                    <li key={post.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-lg hover:bg-rose-50 transition-colors">
+                      <div>
+                        <span className="font-medium text-slate-800">{post.title}</span>
+                        <p className="text-xs text-slate-500">Dipublikasikan: {new Date(post.published_at).toLocaleDateString('id-ID')}</p>
+                      </div>
+                      <div className="space-x-3 mt-2 sm:mt-0 flex-shrink-0">
+                        <button onClick={() => handleEdit(post)} className="text-sm font-semibold text-blue-600 hover:text-blue-800">Edit</button>
+                        <button onClick={() => handleDeletePost(post)} className="text-sm font-semibold text-red-600 hover:text-red-800">Hapus</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          )}
+            <div className="bg-white p-6 rounded-xl shadow-lg">
+              <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">Pesan Masuk</h2>
+              {loading ? <p>Memuat pesan...</p> : (
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {messages.length > 0 ? messages.map(msg => (
+                    <div key={msg.id} className={`p-4 rounded-lg border ${msg.is_read ? 'bg-white' : 'bg-rose-50 border-rose-200'}`}>
+                      <div className="flex justify-between items-center mb-2">
+                        <div>
+                          <p className="font-semibold text-slate-800">{msg.name} <span className="font-normal text-slate-500">&lt;{msg.email}&gt;</span></p>
+                          <p className="text-xs text-slate-500">Diterima: {new Date(msg.created_at).toLocaleString('id-ID')}</p>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <button onClick={() => handleToggleRead(msg)} className="text-sm font-semibold text-green-600 hover:text-green-800">{msg.is_read ? 'Belum Dibaca' : 'Sudah Dibaca'}</button>
+                          <button onClick={() => handleDeleteMessage(msg.id)} className="text-sm font-semibold text-red-600 hover:text-red-800">Hapus</button>
+                        </div>
+                      </div>
+                      <p className="text-slate-700 whitespace-pre-wrap">{msg.message}</p>
+                    </div>
+                  )) : <p className="text-slate-500 text-center">Tidak ada pesan masuk.</p>}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </main>
     </div>

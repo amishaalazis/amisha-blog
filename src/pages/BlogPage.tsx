@@ -12,10 +12,13 @@ interface Post {
 }
 
 // Fungsi untuk membuat potongan teks
-const createExcerpt = (text: string, maxLength: number = 100) => {
-  if (!text) return '';
-  if (text.length <= maxLength) return text;
-  return text.substr(0, text.lastIndexOf(' ', maxLength)) + '...';
+// Ganti fungsi createExcerpt yang lama dengan ini:
+const createExcerpt = (htmlContent: string, maxLength: number = 100) => {
+  if (!htmlContent) return '';
+  const plainText = htmlContent.replace(/<[^>]+>/g, '');
+  
+  if (plainText.length <= maxLength) return plainText;
+  return plainText.substr(0, plainText.lastIndexOf(' ', maxLength)) + '...';
 };
 
 const BlogPage = () => {

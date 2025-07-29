@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import type { FormEvent, ChangeEvent } from 'react';import { useParams } from 'react-router-dom';
+import type { FormEvent, ChangeEvent } from 'react';
+// PASTIKAN Link di-import dari react-router-dom
+import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import type { Session } from '@supabase/supabase-js';
 
 // Tipe data baru untuk komentar
 interface Comment {
@@ -11,11 +14,12 @@ interface Comment {
 }
 
 interface Post {
-  id: number; // Kita butuh ID post untuk menghubungkan komentar
+  id: number;
   title: string;
   content: string;
   image_url: string | null;
   created_at: string;
+  published_at: string | null;
 }
 
 const SinglePostPage = () => {
@@ -25,12 +29,18 @@ const SinglePostPage = () => {
   const [loading, setLoading] = useState(true);
   const [commentData, setCommentData] = useState({ author_name: '', content: '' });
   const [commentStatus, setCommentStatus] = useState('');
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+  }, []);
 
   const fetchPostAndComments = async () => {
     if (!slug) return;
     setLoading(true);
 
-    // 1. Ambil data postingan
     const { data: postData, error: postError } = await supabase
       .from('posts')
       .select('*')
@@ -45,7 +55,6 @@ const SinglePostPage = () => {
     
     setPost(postData);
 
-    // 2. Ambil komentar yang terhubung dengan post ini
     if (postData) {
       const { data: commentsData, error: commentsError } = await supabase
         .from('comments')
@@ -74,90 +83,122 @@ const SinglePostPage = () => {
   const handleCommentSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!post || !commentData.author_name || !commentData.content) {
-      setCommentStatus('Nama dan komentar tidak boleh kosong.');
+      setCommentStatus('Name and comments cannot be left blank.');
       return;
     }
 
-    setCommentStatus('Mengirim komentar...');
+    setCommentStatus('Sending comment...');
 
     const { error } = await supabase
       .from('comments')
-      .insert([
-        { 
-          post_id: post.id,
-          author_name: commentData.author_name,
-          content: commentData.content
-        }
-      ]);
+      .insert([{ 
+        post_id: post.id,
+        author_name: commentData.author_name,
+        content: commentData.content
+      }]);
 
     if (error) {
       setCommentStatus('Gagal mengirim komentar.');
-      console.error('Error submitting comment:', error);
     } else {
       setCommentStatus('Komentar berhasil dikirim!');
-      setCommentData({ author_name: '', content: '' }); // Kosongkan form
-      fetchPostAndComments(); // Muat ulang komentar
+      setCommentData({ author_name: '', content: '' });
+      fetchPostAndComments();
     }
     setTimeout(() => setCommentStatus(''), 4000);
   };
 
+  const handleDeleteComment = async (commentId: number) => {
+    if (window.confirm('Anda yakin ingin menghapus komentar ini?')) {
+      const { error } = await supabase
+        .from('comments')
+        .delete()
+        .eq('id', commentId);
+
+      if (error) {
+        console.error('Error deleting comment:', error);
+        alert('Gagal menghapus komentar.');
+      } else {
+        fetchPostAndComments();
+      }
+    }
+  };
+
   if (loading) return <p className="text-center">Loading...</p>;
-  if (!post) return <p className="text-center">Postingan tidak ditemukan.</p>;
+  if (!post) return <p className="text-center">No posts found.</p>;
+
+  const displayDate = post.published_at || post.created_at;
 
   return (
     <>
+      {/* --- TOMBOL KEMBALI DITAMBAHKAN DI SINI --- */}
+      <div className="max-w-3xl mx-auto mb-8">
+        <Link to="/blog" className="inline-flex items-center gap-2 text-rose-600 hover:text-rose-800 font-semibold transition-colors">
+          <i className="fas fa-arrow-left"></i>
+          Back to All Posts
+        </Link>
+      </div>
+
       <article className="max-w-3xl mx-auto bg-white p-6 sm:p-10 rounded-2xl shadow-lg">
         <header className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif text-rose-800 leading-tight mt-4">
             {post.title}
           </h1>
           <p className="text-slate-500 mt-4 text-sm">
-            Dipublikasikan pada {new Date(post.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+            Publish at {new Date(displayDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </header>
         <figure>
           <img src={post.image_url || `https://placehold.co/1200x600/ffe4e6/be123c?text=Image`} alt={post.title} className="w-full h-auto rounded-xl shadow-md mb-8" />
         </figure>
-        <div className="prose prose-lg max-w-none prose-rose whitespace-pre-wrap">
-          {post.content}
-        </div>
+        <div 
+          className="prose prose-lg max-w-none prose-rose text-justify"
+          dangerouslySetInnerHTML={{ __html: post.content }} 
+        />
       </article>
 
-      {/* --- BAGIAN BARU: KOMENTAR --- */}
+      {/* Bagian Komentar */}
       <section className="max-w-3xl mx-auto mt-12">
         <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-          <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">Komentar ({comments.length})</h2>
+          <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">Comments ({comments.length})</h2>
           
-          {/* Form Komentar */}
           <form onSubmit={handleCommentSubmit} className="mb-8">
-            <h3 className="font-semibold text-lg text-slate-800 mb-3">Tinggalkan Komentar</h3>
+            <h3 className="font-semibold text-lg text-slate-800 mb-3">Leave a Comment</h3>
             <div className="space-y-4">
               <div>
-                <label htmlFor="author_name" className="block text-sm font-medium text-slate-600 mb-1">Nama</label>
+                <label htmlFor="author_name" className="block text-sm font-medium text-slate-600 mb-1">Name</label>
                 <input id="author_name" name="author_name" type="text" value={commentData.author_name} onChange={handleCommentChange} required className="w-full p-2 border border-slate-300 rounded-md" />
               </div>
               <div>
-                <label htmlFor="content" className="block text-sm font-medium text-slate-600 mb-1">Komentar Anda</label>
+                <label htmlFor="content" className="block text-sm font-medium text-slate-600 mb-1">Your Comment</label>
                 <textarea id="content" name="content" rows={4} value={commentData.content} onChange={handleCommentChange} required className="w-full p-2 border border-slate-300 rounded-md" />
               </div>
               <div className="flex items-center gap-4">
-                <button type="submit" className="bg-rose-500 text-white px-6 py-2 rounded-full hover:bg-rose-600">Kirim Komentar</button>
+                <button type="submit" className="bg-rose-500 text-white px-6 py-2 rounded-full hover:bg-rose-600">Sent Comment</button>
                 {commentStatus && <p className="text-sm text-slate-600">{commentStatus}</p>}
               </div>
             </div>
           </form>
 
-          {/* Daftar Komentar */}
           <div className="space-y-6">
             {comments.length > 0 ? comments.map(comment => (
-              <div key={comment.id} className="p-4 border-t border-rose-100">
-                <div className="flex items-center mb-1">
-                  <p className="font-semibold text-rose-800">{comment.author_name}</p>
-                  <p className="text-xs text-slate-400 ml-3">{new Date(comment.created_at).toLocaleString('id-ID')}</p>
+              <div key={comment.id} className="p-4 border-t border-rose-100 group">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-semibold text-rose-800">{comment.author_name}</p>
+                    <p className="text-xs text-slate-400 mt-1">{new Date(comment.created_at).toLocaleString('id-ID')}</p>
+                  </div>
+                  {session && (
+                    <button 
+                      onClick={() => handleDeleteComment(comment.id)} 
+                      className="text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
-                <p className="text-slate-700">{comment.content}</p>
+                <p className="text-slate-700 mt-2">{comment.content}</p>
               </div>
-            )) : <p className="text-slate-500 text-center py-4">Jadilah yang pertama berkomentar!</p>}
+            )) : <p className="text-slate-500 text-center py-4">Be the first to comment!</p>}
           </div>
         </div>
       </section>
