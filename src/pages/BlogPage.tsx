@@ -46,7 +46,7 @@ const BlogPage = () => {
 
   const renderContent = () => {
     if (loading) {
-      return <p className="text-center text-slate-500">Memuat postingan...</p>;
+      return <p className="text-center text-slate-500">Loading posts...</p>;
     }
 
     if (error) {
@@ -54,7 +54,7 @@ const BlogPage = () => {
     }
 
     if (posts.length === 0) {
-      return <p className="text-center text-slate-500">Belum ada postingan yang dipublikasikan.</p>;
+      return <p className="text-center text-slate-500">No posts have been published yet.</p>;
     }
 
     return (
@@ -70,7 +70,7 @@ const BlogPage = () => {
               </h3>
               <p className="text-slate-600 text-sm mb-4 flex-grow">{createExcerpt(post.content)}</p>
               <a href={`/blog/${post.slug}`} className="text-rose-500 hover:text-rose-700 font-semibold mt-auto self-start">
-                Baca Selengkapnya &rarr;
+                Read More &rarr;
               </a>
             </div>
           </div>

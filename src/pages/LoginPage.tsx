@@ -1,38 +1,91 @@
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Efek ini akan memantau status autentikasi.
-  // Jika pengguna berhasil login, ia akan langsung diarahkan ke halaman /admin.
+  // Cek jika sudah ada sesi aktif, langsung arahkan ke admin
   useEffect(() => {
-    supabase.auth.onAuthStateChange((_, session) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate("/admin");
       }
     });
   }, [navigate]);
 
+  // Fungsi untuk menangani proses login saat form disubmit
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    // Mencoba login ke Supabase dengan email dan password
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      setError("Email atau password salah. Silakan coba lagi.");
+      console.error("Login error:", error.message);
+    } else {
+      // Jika berhasil, arahkan ke halaman admin
+      navigate("/admin");
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="min-h-screen bg-rose-50 flex justify-center items-center p-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+      <div className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-3xl font-bold font-serif text-rose-800 text-center mb-2">
-          Welcome Back!
+          Admin Login
         </h1>
         <p className="text-center text-slate-500 mb-8">
-          Login to manage your blog.
+        Please log in to manage your blog.
         </p>
 
-        {/* Komponen Auth dari Supabase */}
-        <Auth
-          supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          providers={["google"]}
-        />
+        <form onSubmit={handleLogin}>
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-slate-700 font-medium mb-2">Email</label>
+              <input 
+                id="email"
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-rose-50 focus:ring-2 focus:ring-rose-400 outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-slate-700 font-medium mb-2">Password</label>
+              <input 
+                id="password"
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-rose-50 focus:ring-2 focus:ring-rose-400 outline-none"
+              />
+            </div>
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+            <div>
+              <button 
+                type="submit"
+                disabled={loading}
+                className="w-full bg-rose-500 text-white py-3 rounded-full hover:bg-rose-600 transition-colors font-semibold text-lg disabled:bg-slate-400"
+              >
+                {loading ? 'Memproses...' : 'Login'}
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );
