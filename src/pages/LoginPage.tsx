@@ -10,7 +10,7 @@ const LoginPage = () => {
   // Efek ini akan memantau status autentikasi.
   // Jika pengguna berhasil login, ia akan langsung diarahkan ke halaman /admin.
   useEffect(() => {
-    supabase.auth.onAuthStateChange((session) => {
+    supabase.auth.onAuthStateChange((_, session) => {
       if (session) {
         navigate("/admin");
       }
