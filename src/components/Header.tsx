@@ -22,13 +22,11 @@ const Header = () => {
     navigate('/');
   };
 
-  // --- INI BAGIAN PENTINGNYA ---
-  // Fungsi ini akan dipanggil oleh setiap NavLink.
-  // Ia menerima { isActive } dan mengembalikan string kelas CSS.
+
   const navLinkClass = ({ isActive }: { isActive: boolean }) => {
     const commonClasses = "py-1 transition-colors duration-300";
-    const activeClasses = "text-rose-500 border-b-2 border-rose-500"; // Kelas untuk link aktif
-    const inactiveClasses = "text-slate-700 border-b-2 border-transparent hover:text-rose-500"; // Kelas untuk link tidak aktif
+    const activeClasses = "text-rose-500 border-b-2 border-rose-500";
+    const inactiveClasses = "text-slate-700 border-b-2 border-transparent hover:text-rose-500"; 
 
     return `${commonClasses} ${isActive ? activeClasses : inactiveClasses}`;
   };
@@ -43,7 +41,8 @@ const Header = () => {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8">
           <NavLink to="/" className={navLinkClass}>Home</NavLink>
-          <NavLink to="/blog" className={navLinkClass}>My Blog</NavLink>
+          <NavLink to="/about" className={navLinkClass}>About</NavLink>
+          <NavLink to="/blog" className={navLinkClass}> Blog</NavLink>
           <NavLink to="/contact" className={navLinkClass}>Contact</NavLink>
           {session && <NavLink to="/admin" className={navLinkClass}>Dashboard</NavLink>}
         </div>
@@ -72,7 +71,8 @@ const Header = () => {
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
             {/* Menggunakan fungsi yang sama untuk mobile */}
             <NavLink to="/" className={navLinkClass + " block"} onClick={closeMobileMenu}>Home</NavLink>
-            <NavLink to="/blog" className={navLinkClass + " block"} onClick={closeMobileMenu}>My Blog</NavLink>
+            <NavLink to="/about" className={navLinkClass + " block"} onClick={closeMobileMenu}> About</NavLink>
+            <NavLink to="/blog" className={navLinkClass + " block"} onClick={closeMobileMenu}> Blog</NavLink>
             <NavLink to="/contact" className={navLinkClass + " block"} onClick={closeMobileMenu}>Contact</NavLink>
             {session && <NavLink to="/admin" className={navLinkClass + " block"} onClick={closeMobileMenu}>Dashboard</NavLink>}
             <div className="mt-4">

@@ -31,6 +31,9 @@ import SinglePostPage from './pages/SinglePostPage';
 import ContactPage from './pages/ContactPage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
+import AboutPage from './pages/AboutPage';
+
+
 
 
 function App() {
@@ -39,6 +42,8 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} /> {/* <-- Tambahkan rute ini */}
+
           <Route path="/Blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<SinglePostPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -46,6 +51,7 @@ function App() {
         
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        
       </Routes>
     </BrowserRouter>
   );
