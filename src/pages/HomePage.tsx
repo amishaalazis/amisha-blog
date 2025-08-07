@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { TextGenerateEffect } from "../components/ui/TextGenerateEffect";
 
 const HomePage = () => {
   return (
@@ -7,17 +8,20 @@ const HomePage = () => {
         
         {/* Kolom Teks */}
         <div className="w-full md:w-1/2 text-center md:text-left">
-          <span className="text-xl font-medium text-rose-500 font-sans">
+          <span className="text-xl text-rose-500 ">
             Hello, I'm
           </span>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif text-rose-800 leading-tight mt-1">
+          {/* <TextGenerateEffect 
+            words="Amisha Al Azis" 
+            className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif text-rose-800 leading-tight mt-1"
+          /> */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold  text-rose-800 leading-tight mt-1">
             Amisha Al Azis
           </h1>
           <p className="mt-4 text-slate-600 text-base sm:text-lg max-w-xl mx-auto md:mx-0">
             Welcome to my little world! Here, I share stories about  daily adventures that I want to express.
           </p>
           
-          {/* Tombol Aksi */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
             <Link 
               to="/blog" 
@@ -40,11 +44,12 @@ const HomePage = () => {
               <a href="https://instagram.com/amishaalazis" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-rose-500 text-2xl transition-colors">
                 <i className="fab fa-instagram"></i>
               </a>
-              {/* <a href="https://tiktok.com/@akunanda" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-rose-500 text-2xl transition-colors">
-                <i className="fab fa-tiktok"></i>
-              </a> */}
+       
               <a href="https://linkedin.com/in/amishaalazis" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-rose-500 text-2xl transition-colors">
                 <i className="fab fa-linkedin"></i>
+              </a>
+              <a href="https://open.spotify.com/user/31jorvbbqruydgszqi7egkkd4yca?si=7e3ab93124054227" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-rose-500 text-2xl transition-colors">
+                <i className="fab fa-spotify"></i>
               </a>
             </div>
           </div>

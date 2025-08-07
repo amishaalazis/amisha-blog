@@ -49,8 +49,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
         </Route>
         
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/login" element={<LoginPage />} />
         
       </Routes>
     </BrowserRouter>

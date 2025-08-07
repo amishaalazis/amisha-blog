@@ -46,7 +46,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }: { isOpen: 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
       <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md text-center">
-        <h2 className="text-2xl font-serif text-slate-800 mb-2">{title}</h2>
+        <h2 className="text-2xl text-slate-800 mb-2">{title}</h2>
         <p className="text-slate-600 mb-6">{message}</p>
         <div className="flex justify-center gap-4">
           <button onClick={onClose} className="bg-slate-200 px-8 py-2 rounded-full font-semibold">Cancel</button>
@@ -311,7 +311,7 @@ const AdminPage = () => {
     <div className="bg-slate-100 min-h-screen font-sans">
       <header className="bg-white shadow-sm sticky top-0 z-20">
         <nav className="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold font-serif text-rose-800">Admin Dashboard</h1>
+          <h1 className="text-xl font-bold text-rose-800">Admin Dashboard</h1>
           <div className="flex items-center space-x-4">
             <Link to="/" className="text-sm text-slate-600 hover:text-rose-500">Back to Site</Link>
             <button onClick={handleLogout} className="bg-rose-500 text-white px-5 py-2 rounded-full text-sm font-medium">Logout</button>
@@ -322,7 +322,7 @@ const AdminPage = () => {
       <main className="container mx-auto px-4 sm:px-6 py-8">
         <div className="bg-white p-6 rounded-xl shadow-lg mb-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <h2 className="text-2xl font-serif text-rose-700">Post Management</h2>
+            <h2 className="text-2xl text-rose-700">Post Management</h2>
             <button onClick={() => openPostModal()} className="bg-rose-500 text-white px-5 py-2 rounded-full font-semibold text-sm w-full md:w-auto flex items-center justify-center gap-2"><i className="fas fa-plus"></i>Create New Post</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -374,7 +374,7 @@ const AdminPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white p-6 rounded-xl shadow-lg">
               <div className="flex justify-between items-center mb-6 border-b pb-4">
-                <h2 className="text-2xl font-serif text-rose-700 flex items-center gap-3"><i className="fas fa-tags"></i>Management Category</h2>
+                <h2 className="text-2xl text-rose-700 flex items-center gap-3"><i className="fas fa-tags"></i>Management Category</h2>
                 <button onClick={() => openCategoryModal()} className="bg-rose-100 text-rose-800 px-4 py-2 rounded-full text-xs font-semibold">Add</button>
               </div>
               <ul className="space-y-2 max-h-48 overflow-y-auto pr-2">
@@ -390,7 +390,7 @@ const AdminPage = () => {
               </ul>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg">
-              <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4 flex items-center gap-3"><i className="fas fa-envelope"></i>Message</h2>
+              <h2 className="text-2xl text-rose-700 mb-6 border-b pb-4 flex items-center gap-3"><i className="fas fa-envelope"></i>Message</h2>
               <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
                 {messages.length > 0 ? messages.map(msg => (
                   <div key={msg.id} className={`p-4 rounded-lg border ${msg.is_read ? '' : 'bg-rose-50'}`}>
@@ -414,7 +414,7 @@ const AdminPage = () => {
           <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
               <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                   <div className="flex justify-between items-center mb-6 pb-4 border-b">
-                      <h2 className="text-2xl font-serif text-rose-700">{editingPost?.id ? 'Edit Post' : 'Create New Post'}</h2>
+                      <h2 className="text-2xl text-rose-700">{editingPost?.id ? 'Edit Post' : 'Create New Post'}</h2>
                       <button onClick={() => setIsPostModalOpen(false)} className="text-2xl text-slate-500 hover:text-slate-800">&times;</button>
                   </div>
                   <form onSubmit={handleSubmitPost} className="space-y-4">
@@ -456,7 +456,7 @@ const AdminPage = () => {
       {isCategoryModalOpen && (
           <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
             <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
-              <h2 className="text-2xl font-serif mb-4">{editingCategory ? 'Edit Category' : 'Add New Category'}</h2>
+              <h2 className="text-2xl mb-4">{editingCategory ? 'Edit Category' : 'Add New Category'}</h2>
               <form onSubmit={handleCategorySubmit}>
                 <label htmlFor="categoryName" className="block text-sm font-medium text-slate-700 mb-1">Category Name</label>
                 <input id="categoryName" type="text" value={categoryName} onChange={e => setCategoryName(e.target.value)} className="w-full p-2 border rounded-md mb-4" required />

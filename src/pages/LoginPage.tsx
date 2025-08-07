@@ -31,7 +31,7 @@ const LoginPage = () => {
     });
 
     if (error) {
-      setError("Email atau password salah. Silakan coba lagi.");
+      setError("Incorrect email or password. Please try again..");
       console.error("Login error:", error.message);
     } else {
       // Jika berhasil, arahkan ke halaman admin
@@ -81,7 +81,7 @@ const LoginPage = () => {
                 disabled={loading}
                 className="w-full bg-rose-500 text-white py-3 rounded-full hover:bg-rose-600 transition-colors font-semibold text-lg disabled:bg-slate-400"
               >
-                {loading ? 'Memproses...' : 'Login'}
+                {loading ? 'Processing...' : 'Login'}
               </button>
             </div>
           </div>

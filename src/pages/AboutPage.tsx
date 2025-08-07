@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 const AboutPage = () => {
   return (
     <section className="text-center py-20">
-      <h1 className="text-4xl sm:text-5xl font-bold font-serif text-rose-800 leading-tight">
+      <h1 className="text-4xl sm:text-5xl font-bold text-rose-800 leading-tight">
         🚧 About Me 🚧
       </h1>
       <p className="mt-4 text-slate-600 text-lg max-w-xl mx-auto">

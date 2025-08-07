@@ -91,11 +91,11 @@ const SinglePostPage = () => {
   const handleCommentSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!post || !commentData.author_name || !commentData.content) {
-      setCommentStatus('Nama dan komentar tidak boleh kosong.');
+      setCommentStatus('Name and comments cannot be left blank.');
       return;
     }
 
-    setCommentStatus('Mengirim komentar...');
+    setCommentStatus('Sent Comment...');
 
     const { error } = await supabase
       .from('comments')
@@ -106,9 +106,9 @@ const SinglePostPage = () => {
       }]);
 
     if (error) {
-      setCommentStatus('Gagal mengirim komentar.');
+      setCommentStatus('Failed to post comment.');
     } else {
-      setCommentStatus('Komentar berhasil dikirim!');
+      setCommentStatus('Your comment has been successfully submitted!');
       setCommentData({ author_name: '', content: '' });
       fetchPostAndComments();
     }
@@ -116,7 +116,7 @@ const SinglePostPage = () => {
   };
 
   const handleDeleteComment = async (commentId: number) => {
-    if (window.confirm('Anda yakin ingin menghapus komentar ini?')) {
+    if (window.confirm('Are you sure you want to delete this comment?')) {
       const { error } = await supabase
         .from('comments')
         .delete()
@@ -124,15 +124,15 @@ const SinglePostPage = () => {
 
       if (error) {
         console.error('Error deleting comment:', error);
-        alert('Gagal menghapus komentar.');
+        alert('Failed to delete comment.');
       } else {
         fetchPostAndComments();
       }
     }
   };
 
-  if (loading) return <p className="text-center">Memuat...</p>;
-  if (!post) return <p className="text-center">Postingan tidak ditemukan.</p>;
+  if (loading) return <p className="text-center">Loading...</p>;
+  if (!post) return <p className="text-center">Post Not Found.</p>;
 
   // Gunakan tanggal publikasi jika ada, jika tidak, gunakan tanggal pembuatan
   const displayDate = post.published_at || post.created_at;
@@ -142,7 +142,7 @@ const SinglePostPage = () => {
       <div className="max-w-3xl mx-auto mb-8">
         <Link to="/blog" className="inline-flex items-center gap-2 text-rose-600 hover:text-rose-800 font-semibold transition-colors">
           <i className="fas fa-arrow-left"></i>
-          Kembali ke Semua Postingan
+          Back to All Post
         </Link>
       </div>
 
@@ -153,11 +153,11 @@ const SinglePostPage = () => {
               {post.categories.name}
             </span>
           )}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-serif text-rose-800 leading-tight mt-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-rose-800 leading-tight mt-4">
             {post.title}
           </h1>
           <p className="text-slate-500 mt-4 text-sm">
-            Dipublikasikan pada {new Date(displayDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+            Publish at {new Date(displayDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </header>
         <figure>
@@ -171,21 +171,21 @@ const SinglePostPage = () => {
 
       <section className="max-w-3xl mx-auto mt-12">
         <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-          <h2 className="text-2xl font-serif text-rose-700 mb-6 border-b pb-4">Komentar ({comments.length})</h2>
+          <h2 className="text-2xl text-rose-700 mb-6 border-b pb-4">Comment ({comments.length})</h2>
           
           <form onSubmit={handleCommentSubmit} className="mb-8">
-            <h3 className="font-semibold text-lg text-slate-800 mb-3">Tinggalkan Komentar</h3>
+            <h3 className="font-semibold text-lg text-slate-800 mb-3">Leave Comment</h3>
             <div className="space-y-4">
               <div>
-                <label htmlFor="author_name" className="block text-sm font-medium text-slate-600 mb-1">Nama</label>
+                <label htmlFor="author_name" className="block text-sm font-medium text-slate-600 mb-1">Name</label>
                 <input id="author_name" name="author_name" type="text" value={commentData.author_name} onChange={handleCommentChange} required className="w-full p-2 border border-slate-300 rounded-md" />
               </div>
               <div>
-                <label htmlFor="content" className="block text-sm font-medium text-slate-600 mb-1">Komentar Anda</label>
+                <label htmlFor="content" className="block text-sm font-medium text-slate-600 mb-1">Your Comments</label>
                 <textarea id="content" name="content" rows={4} value={commentData.content} onChange={handleCommentChange} required className="w-full p-2 border border-slate-300 rounded-md" />
               </div>
               <div className="flex items-center gap-4">
-                <button type="submit" className="bg-rose-500 text-white px-6 py-2 rounded-full hover:bg-rose-600">Kirim Komentar</button>
+                <button type="submit" className="bg-rose-500 text-white px-6 py-2 rounded-full hover:bg-rose-600">Sent Comment</button>
                 {commentStatus && <p className="text-sm text-slate-600">{commentStatus}</p>}
               </div>
             </div>
@@ -204,13 +204,13 @@ const SinglePostPage = () => {
                       onClick={() => handleDeleteComment(comment.id)} 
                       className="text-xs text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      Hapus
+                      Delete
                     </button>
                   )}
                 </div>
                 <p className="text-slate-700 mt-2">{comment.content}</p>
               </div>
-            )) : <p className="text-slate-500 text-center py-4">Jadilah yang pertama berkomentar!</p>}
+            )) : <p className="text-slate-500 text-center py-4">Be the first to comment!</p>}
           </div>
         </div>
       </section>

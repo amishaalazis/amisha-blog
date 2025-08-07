@@ -41,7 +41,7 @@ const ContactPage = () => {
   return (
     <section>
       <div className="text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold font-serif text-rose-800">Get In Touch</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold text-rose-800">Get In Touch</h2>
         <p className="mt-2 text-slate-600 max-w-2xl mx-auto">
         Have questions or ideas for collaboration? I would love to hear from you!
         </p>
@@ -112,6 +112,9 @@ const ContactPage = () => {
           <a href="https://linkedin.com/in/amishaalazis" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-rose-500 text-3xl transition-colors">
             <i className="fab fa-linkedin"></i>
           </a>
+          <a href="https://open.spotify.com/user/31jorvbbqruydgszqi7egkkd4yca?si=7e3ab93124054227" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-rose-500 text-2xl transition-colors">
+                <i className="fab fa-spotify"></i>
+              </a>
         </div>
       </div>
 

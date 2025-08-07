@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { Link } from "react-router-dom";
+import { HoverEffect } from "../components/ui/card-hover-effect";
+import { Button } from "@/components/ui/button";
 
 // Definisikan tipe data baru
 interface Category {
@@ -104,22 +106,29 @@ const BlogPage = () => {
   }, [currentPage, sortOrder, debouncedSearchTerm, selectedCategory]); // Tambahkan selectedCategory sebagai dependensi
 
   const totalPages = Math.ceil(totalPosts / postsPerPage);
+  // const formattedPosts = posts.map(post => ({
+  //   title: post.title,
+  //   description: createExcerpt(post.content),
+  //   link: `/blog/${post.slug}`,
+  // }));
 
   const renderContent = () => {
     if (loading)
       return <p className="text-center text-slate-500">Loading for Post...</p>;
-    if (error) return <p className="text-center text-red-500">{error}</p>;
+    
+    if (error) 
+      return <p className="text-center text-red-500">{error}</p>;
+    
     if (posts.length === 0)
       return <p className="text-center text-slate-500">No posts found.</p>;
 
+    // BENAR: Gunakan layout grid Anda yang lama, tetapi bungkus setiap kartu dengan HoverEffect
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post) => (
-          <div
-            key={post.id}
-            className="card bg-white rounded-xl overflow-hidden shadow-lg flex flex-col"
-          >
-            <Link to={`/blog/${post.slug}`}>
+          <HoverEffect key={post.id} link={`/blog/${post.slug}`}>
+            {/* Di sini kita memasukkan desain kartu Anda yang lama sebagai "children" */}
+            <div className="flex flex-col h-full">
               <img
                 src={
                   post.image_url ||
@@ -128,30 +137,24 @@ const BlogPage = () => {
                 alt={post.title}
                 className="w-full h-48 object-cover"
               />
-            </Link>
-            <div className="p-6 flex flex-col flex-grow">
-              {/* Tampilkan nama kategori di sini */}
-              {post.categories && (
-                <span className="text-xs font-semibold bg-rose-100 text-rose-600 px-3 py-1 rounded-full self-start mb-3">
-                  {post.categories.name}
-                </span>
-              )}
-              <h3 className="font-bold text-xl text-slate-800 mb-2 font-serif">
-                <Link to={`/blog/${post.slug}`} className="hover:text-rose-600">
+              <div className="p-6 flex flex-col flex-grow">
+                {post.categories && (
+                  <span className="text-xs font-semibold bg-rose-100 dark:bg-rose-300/50 text-rose-600 dark:text-rose-500 px-3 py-1 rounded-full self-start mb-3">
+                    {post.categories.name}
+                  </span>
+                )}
+                <h3 className="font-bold text-xl text-slate-800 dark:text-slate mb-2 ">
                   {post.title}
-                </Link>
-              </h3>
-              <p className="text-slate-600 text-sm mb-4 flex-grow">
-                {createExcerpt(post.content)}
-              </p>
-              <a
-                href={`/blog/${post.slug}`}
-                className="text-rose-500 hover:text-rose-700 font-semibold mt-auto self-start"
-              >
-                Read More &rarr;
-              </a>
+                </h3>
+                <p className="text-slate-600 dark:text-slate-500 text-sm mb-4 flex-grow">
+                  {createExcerpt(post.content)}
+                </p>
+                <span className="text-rose-500 dark:text-dark-accent hover:text-rose-700 font-semibold mt-auto self-start">
+                  Read More &rarr;
+                </span>
+              </div>
             </div>
-          </div>
+          </HoverEffect>
         ))}
       </div>
     );
@@ -159,7 +162,7 @@ const BlogPage = () => {
 
   return (
     <section>
-      <h2 className="text-3xl sm:text-4xl font-bold text-center font-serif text-rose-800 mb-6">
+      <h2 className="text-3xl sm:text-4xl font-bold text-center text-rose-800 mb-6">
         My Latest Posts
       </h2>
 
@@ -176,7 +179,7 @@ const BlogPage = () => {
           All Post
         </button>
         {categories.map((cat) => (
-          <button
+          <button 
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
             className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
@@ -223,25 +226,27 @@ const BlogPage = () => {
       {/* Komponen Pagination */}
       {totalPages > 1 && (
         <div className="mt-12 flex justify-center items-center gap-4">
-          <button
+          <Button variant="primary-outline"
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
             className="px-4 py-2 bg-white rounded-md shadow disabled:opacity-50"
           >
             Previous
-          </button>
+          </Button>
           <span className="text-slate-600">
             Page {currentPage} From {totalPages}
           </span>
-          <button
+          <Button variant="primary-outline"
+
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
             disabled={currentPage === totalPages}
             className="px-4 py-2 bg-white rounded-md shadow disabled:opacity-50"
-          >
+            >
+
             Next
-          </button>
+          </Button>
         </div>
       )}
     </section>

@@ -36,7 +36,7 @@ const Header = () => {
   return (
     <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
       <nav className="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold font-serif text-rose-800">Amishaalazis</Link>
+        <Link to="/" className="text-2xl font-bold  text-rose-800">amishaalazis</Link>
         
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8">
