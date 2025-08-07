@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { HoverEffect } from "../components/ui/card-hover-effect";
 import { Button } from "@/components/ui/button";
 

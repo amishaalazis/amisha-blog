@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { TextGenerateEffect } from "../components/ui/TextGenerateEffect";
+// import { TextGenerateEffect } from "../components/ui/TextGenerateEffect";
 
 const HomePage = () => {
   return (
