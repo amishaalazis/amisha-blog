@@ -114,46 +114,44 @@ const BlogPage = () => {
 
   const renderContent = () => {
     if (loading)
-      return <p className="text-center text-slate-500">Loading for Post...</p>;
+      return <p className="text-center text-slate-500">Memuat Postingan...</p>;
     
     if (error) 
       return <p className="text-center text-red-500">{error}</p>;
     
     if (posts.length === 0)
-      return <p className="text-center text-slate-500">No posts found.</p>;
+      return <p className="text-center text-slate-500">Postingan tidak ditemukan.</p>;
 
-    // BENAR: Gunakan layout grid Anda yang lama, tetapi bungkus setiap kartu dengan HoverEffect
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post) => (
           <HoverEffect key={post.id} link={`/blog/${post.slug}`}>
-            {/* Di sini kita memasukkan desain kartu Anda yang lama sebagai "children" */}
-            <div className="flex flex-col h-full">
-              <img
-                src={
-                  post.image_url ||
-                  `https://placehold.co/600x400/ffe4e6/be123c?text=Image`
-                }
-                alt={post.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-6 flex flex-col flex-grow">
-                {post.categories && (
-                  <span className="text-xs font-semibold bg-rose-100 dark:bg-rose-300/50 text-rose-600 dark:text-rose-500 px-3 py-1 rounded-full self-start mb-3">
-                    {post.categories.name}
-                  </span>
-                )}
-                <h3 className="font-bold text-xl text-slate-800 dark:text-slate mb-2 ">
-                  {post.title}
-                </h3>
-                <p className="text-slate-600 dark:text-slate-500 text-sm mb-4 flex-grow">
-                  {createExcerpt(post.content)}
-                </p>
-                <span className="text-rose-500 dark:text-dark-accent hover:text-rose-700 font-semibold mt-auto self-start">
-                  Read More &rarr;
+            {/* Hapus <div> pembungkus dari sini */}
+            <img
+              src={
+                post.image_url ||
+                `https://placehold.co/600x400/ffe4e6/be123c?text=Image`
+              }
+              alt={post.title}
+              className="w-full h-48 object-cover"
+            />
+            <div className="p-6 flex flex-col flex-grow">
+              {post.categories && (
+                <span className="text-xs font-semibold bg-rose-100 text-rose-600 px-3 py-1 rounded-full self-start mb-3">
+                  {post.categories.name}
                 </span>
-              </div>
+              )}
+              <h3 className="font-bold text-xl text-slate-800 mb-2 font-serif">
+                {post.title}
+              </h3>
+              <p className="text-slate-600 text-sm mb-4 flex-grow">
+                {createExcerpt(post.content)}
+              </p>
+              <span className="text-rose-500 hover:text-rose-700 font-semibold mt-auto self-start">
+                Baca Selengkapnya &rarr;
+              </span>
             </div>
+            {/* Hapus </div> penutup dari sini */}
           </HoverEffect>
         ))}
       </div>
@@ -162,9 +160,9 @@ const BlogPage = () => {
 
   return (
     <section>
-      <h2 className="text-3xl sm:text-4xl font-bold text-center text-rose-800 mb-6">
+      {/* <h2 className="text-3xl sm:text-4xl font-bold text-center text-rose-800 mb-6">
         My Latest Posts
-      </h2>
+      </h2> */}
 
       {/* --- BAGIAN BARU: FILTER KATEGORI --- */}
       <div className="mb-8 flex justify-center flex-wrap gap-2">

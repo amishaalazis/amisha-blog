@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
-// Pastikan Anda mengimpor NavLink
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import type { Session } from '@supabase/supabase-js';
+import {
+  Navbar, NavBody, NavItems, MobileNav, NavbarLogo, NavbarButton,
+  MobileNavHeader, MobileNavToggle, MobileNavMenu
+} from './ui/resizable-navbar';
 
-const Header = () => {
+export const Header = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -18,74 +21,837 @@ const Header = () => {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
+    await supabase.auth.signOut({ scope: "local" });
+    navigate("/");
   };
 
+  const navItems = [
+    { name: "Home", link: "/" },
+    { name: "About", link: "/about" },
+    { name: "My Blog", link: "/blog" },
+    { name: "Contact", link: "/contact" },
+  ];
+  if (session) {
+    navItems.push({ name: "Dashboard", link: "/admin" });
+  }
 
-  const navLinkClass = ({ isActive }: { isActive: boolean }) => {
-    const commonClasses = "py-1 transition-colors duration-300";
-    const activeClasses = "text-rose-500 border-b-2 border-rose-500";
-    const inactiveClasses = "text-slate-700 border-b-2 border-transparent hover:text-rose-500"; 
-
-    return `${commonClasses} ${isActive ? activeClasses : inactiveClasses}`;
-  };
-  
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   return (
-    <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-      <nav className="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold  text-rose-800">amishaalazis</Link>
-        
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-8">
-          <NavLink to="/" className={navLinkClass}>Home</NavLink>
-          <NavLink to="/about" className={navLinkClass}>About</NavLink>
-          <NavLink to="/blog" className={navLinkClass}> Blog</NavLink>
-          <NavLink to="/contact" className={navLinkClass}>Contact</NavLink>
-          {session && <NavLink to="/admin" className={navLinkClass}>Dashboard</NavLink>}
-        </div>
-        <div className="hidden md:flex items-center space-x-4">
+    <Navbar>
+      <NavBody>
+        <NavbarLogo />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <NavItems items={navItems} />
+        <div className="flex items-center gap-3">
           {session ? (
-            <button onClick={handleLogout} className="bg-slate-200 text-slate-800 px-5 py-2 rounded-full hover:bg-slate-300">Logout</button>
+            <NavbarButton onClick={handleLogout} variant="secondary">Logout</NavbarButton>
           ) : (
-            <Link to="/login" className="bg-rose-500 text-white px-5 py-2 rounded-full hover:bg-rose-600">Login</Link>
+            <Link to="/login"><NavbarButton variant="primary">Login</NavbarButton></Link>
           )}
         </div>
+      </NavBody>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden">
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-700">
-            {isMobileMenuOpen ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+      {/* --- Navigasi Mobile --- */}
+      <MobileNav>
+        <MobileNavHeader>
+          <NavbarLogo />
+          <div className="flex items-center gap-4">
+            <MobileNavToggle
+              isOpen={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            />
+          </div>
+        </MobileNavHeader>
+        <MobileNavMenu isOpen={isMobileMenuOpen}>
+          {navItems.map((item, idx) => (
+            <NavLink
+              key={`mobile-link-${idx}`}
+              to={item.link}
+              onClick={closeMobileMenu}
+              className="block py-2 text-slate-700 dark:text-slate-200"
+            >
+              {item.name}
+            </NavLink>
+          ))}
+          <div className="flex w-full flex-col gap-4 pt-4 mt-2 border-t border-rose-100 dark:border-slate-700">
+            {session ? (
+              <NavbarButton onClick={() => { handleLogout(); closeMobileMenu(); }} variant="secondary" className="w-full">Logout</NavbarButton>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+              <Link to="/login" className="w-full"><NavbarButton onClick={closeMobileMenu} variant="primary" className="w-full">Login</NavbarButton></Link>
             )}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
-            {/* Menggunakan fungsi yang sama untuk mobile */}
-            <NavLink to="/" className={navLinkClass + " block"} onClick={closeMobileMenu}>Home</NavLink>
-            <NavLink to="/about" className={navLinkClass + " block"} onClick={closeMobileMenu}> About</NavLink>
-            <NavLink to="/blog" className={navLinkClass + " block"} onClick={closeMobileMenu}> Blog</NavLink>
-            <NavLink to="/contact" className={navLinkClass + " block"} onClick={closeMobileMenu}>Contact</NavLink>
-            {session && <NavLink to="/admin" className={navLinkClass + " block"} onClick={closeMobileMenu}>Dashboard</NavLink>}
-            <div className="mt-4">
-              {session ? (
-                <button onClick={() => { handleLogout(); closeMobileMenu(); }} className="w-full bg-slate-200 text-slate-800 px-5 py-2 rounded-full">Logout</button>
-              ) : (
-                <Link to="/login" onClick={closeMobileMenu} className="w-full block bg-rose-500 text-white px-5 py-2 rounded-full">Login</Link>
-              )}
-            </div>
-        </div>
-      </div>
-    </header>
+          </div>
+        </MobileNavMenu>
+      </MobileNav>
+    </Navbar>
   );
 };
-
-export default Header;

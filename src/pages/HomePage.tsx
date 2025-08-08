@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 // import { TextGenerateEffect } from "../components/ui/TextGenerateEffect";
 
 const HomePage = () => {
+  console.log("HomePage dirender"); // <-- TAMBAHKAN BARIS INI
+
   return (
     <section className="overflow-hidden py-8"> {/* Menambah padding vertikal */}
       <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
